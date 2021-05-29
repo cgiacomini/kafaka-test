@@ -54,7 +54,7 @@ Usage()
 {
    echo "Usage: $0 -b<broker> -t<topic_name> -d<postgres_host> -u<db_user> -p<db_pasword> -T <tag>"
    echo "Where:"
-   echo " -b : broke      - Kafka broker. ex: localhost:9092"
+   echo " -b : broker     - Kafka broker. ex: localhost:9092"
    echo " -t : topic_name - Kafka topic name"
    echo " -d : postgresql database host"
    echo " -u : postgres admin user"

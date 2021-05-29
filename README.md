@@ -80,3 +80,30 @@ Usage:
  metrics    | expression_match | boolean
  metrics    | url              | character varying
 ```
+
+## Run E2E Tests (RobotFramework)
+
+Prerequisites:
+* Kafka zookeeper and kafka server up and running
+* Posgresql database up and running
+* Python virtual environment 
+
+```
+$ source PyEnv/bin/activate
+
+$ ./run_tests.sh
+Usage: ./run_tests.sh -b<broker> -t<topic_name> -d<postgres_host> -u<db_user> -p<db_pasword> -T <tag>
+Where:
+ -b : broker     - Kafka broker. ex: localhost:9092
+ -t : topic_name - Kafka topic name
+ -d : postgresql database host
+ -u : postgres admin user
+ -p : postgres amin password
+ -T : tests tag
+
+Ex. 
+    ./run_tests.sh -b localhost:9092 -t mytopic -d localhost -u dbuser -p 'mydbpwd' -T all
+```
+
+## Jenkinsfile
+A Simple example of Jenkins file, for test automation, is provided.
