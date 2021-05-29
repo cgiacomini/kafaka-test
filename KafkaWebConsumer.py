@@ -58,7 +58,7 @@ class KafkaWebConsumer():
 
            
            # Connect to postgres and create metrics database and table
-           logging.info(f'Succesfully connected to boker: {broker}')
+           logging.info(f'Succesfully connected to boker: {broker}, topic: {topic_name}')
            self.dbConnection = self.create_db('metricsdb', 'metrics')
 
         except NoBrokersAvailable as ex:
@@ -74,8 +74,14 @@ class KafkaWebConsumer():
     ############################################################################
     def store_statistics(self, message: str):
 
+        logging.info(f'Insert into metrics table values {message}')
+
         obj = json.loads(message)    
-        logging.info(f'instert into metrics table values {message}')
+
+        if obj['pattern']['expression'] == None:
+           pattern = ""
+        else :
+           pattern = f"'{obj['pattern']['expression']}','{obj['pattern']['match']}',"
 
         try:
            date_time = datetime.now(timezone.utc)
@@ -83,9 +89,10 @@ class KafkaWebConsumer():
                                    '{date_time}',
                                     {obj['status_code']},
                                     {obj['response_time']},
-                                   '{obj['pattern']['expression']}',
-                                   '{obj['pattern']['match']}',
+                                    {pattern}
                                    '{obj['url']}')"""
+
+           logging.info(query)
            cursor = self.dbConnection.cursor()
            cursor.execute(query)
            self.dbConnection.commit()
@@ -99,7 +106,7 @@ class KafkaWebConsumer():
     ############################################################################
     def start(self):
         
-        print ('Collecting statistics ...')
+        print (f'Collecting statistics ...')
         while True:
           for message in self._consumer:
 
@@ -107,8 +114,8 @@ class KafkaWebConsumer():
               logging.info(f'Message: {value}')
               self.store_statistics(value)
 
-              logging.info(f'Sleeping...')
-              time.sleep(self._polling_interval)
+          logging.info(f'Sleeping...')
+          time.sleep(self._polling_interval)
 
    
     ############################################################################
@@ -148,7 +155,7 @@ class KafkaWebConsumer():
                   connection_params['database'] = database_name
                   logging.info(f'Database connection params : {connection_params}')
                   connection = psycopg2.connect(**connection_params)
-                  logging.info(f'Succesfully connected to "{database_name}.')
+                  logging.info(f'Succesfully connected to {database_name}.')
               else:
                   # Creare database and tables
                   logging.info(f"'{database_name}' Database not exist, creating ...")
@@ -162,7 +169,7 @@ class KafkaWebConsumer():
                   connection_params['database'] = database_name
                   logging.info(f'Database connection params : {connection_params}')
                   connection = psycopg2.connect(**connection_params)
-                  logging.info(f'Succesfully connected to "{database_name}.')
+                  logging.info(f'Succesfully connected to {database_name}.')
 
                   logging.info(f"Database: {database_name} {table_name} table Creating...")
                   cur = connection.cursor()
@@ -211,7 +218,6 @@ def main(argv):
    except KeyboardInterrupt:
        print ("Exiting")
    sys.exit(0)
-
 
 
 ################################################################################

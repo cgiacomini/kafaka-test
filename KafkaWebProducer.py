@@ -7,7 +7,6 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from kafka import KafkaProducer, KafkaAdminClient
 from kafka.errors import TopicAlreadyExistsError, NoBrokersAvailable
 from kafka.admin.new_topic import NewTopic 
-from bs4 import BeautifulSoup
 
 from typing import List
 from typing import Optional
@@ -103,7 +102,7 @@ class KafkaWebProducer():
            broker             = self._kafkaconfig['broker']
 
            # Define topic
-           print (f'Creating topic {topic_name} ...')
+           logging.info(f'Creating topic {topic_name} ...')
            self._topic = NewTopic(name = topic_name,
                                   num_partitions = num_partition,
                                   replication_factor = replication_factor)
@@ -135,6 +134,7 @@ class KafkaWebProducer():
  
         try:
            # for simplicity we do not verify SLL certificate here
+           logging.info(f'send HTTP request {web_url}')
            return requests.get(web_url, headers=headers, verify=False)
 
 

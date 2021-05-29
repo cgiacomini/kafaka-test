@@ -1,0 +1,14 @@
+[kafka]
+broker=$KAFKA_BROKER
+consumer_timeout_ms=1000
+auto_offset_reset=latest
+enable_auto_commit=True
+topic_name=$KAFKA_TOPIC
+num_partitions=3
+replica_factor=1
+
+[postgresql]
+host=$POSTGRES_HOST
+database=$POSTGRES_DB
+user=$POSTGRES_USER
+password=$POSTGRES_PASSWORD
